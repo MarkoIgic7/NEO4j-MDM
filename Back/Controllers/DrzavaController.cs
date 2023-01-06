@@ -28,6 +28,7 @@ namespace NeoProba.Controllers
         {
             Drzava d = new Drzava();
             d.Naziv = naziv;
+            d.Id = Guid.NewGuid().ToString();
             _client.Cypher.Create("(d:Drzava $d)")
                             .WithParam("d",d)
                             .ExecuteWithoutResultsAsync();
@@ -43,7 +44,11 @@ namespace NeoProba.Controllers
                         .With("d{.*, Id:id(d)} AS drzava")
                         .Return(drzava => drzava.As<Drzava>())
                         .ResultsAsync;
-            return Ok(users);
+            var zaVracanje = users.FirstOrDefault();
+            if(zaVracanje!=null)
+                return Ok(zaVracanje);
+            else
+                return BadRequest("Nema drzave");
         }
     }
 }
