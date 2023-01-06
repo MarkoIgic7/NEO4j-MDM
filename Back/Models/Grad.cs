@@ -5,7 +5,7 @@ namespace Models
 {
     public class Grad
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Naziv { get; set; }
         public int Troskovi { get; set; }
         
