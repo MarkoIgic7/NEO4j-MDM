@@ -28,7 +28,7 @@ namespace NeoProba.Controllers
         {
             Drzava d = new Drzava();
             d.Naziv = naziv;
-            d.Id = Guid.NewGuid().ToString();
+            d.Id=Guid.NewGuid().ToString();
             _client.Cypher.Create("(d:Drzava $d)")
                             .WithParam("d",d)
                             .ExecuteWithoutResultsAsync();
@@ -38,17 +38,18 @@ namespace NeoProba.Controllers
         [Route("PreuzmiDrzavu/{drzava}")]
         public async Task<ActionResult> PreuzmiDrzavu(string drzava)
         {
-            var users = await _client.Cypher
+           /*var users = await _client.Cypher
                         .Match("(d:Drzava)")
                         .Where("d.Naziv='"+drzava+"'")
-                        .With("d{.*, Id:id(d)} AS drzava")
+                        //.With("d{.*, Id:id(d)} AS drzava")
                         .Return(drzava => drzava.As<Drzava>())
-                        .ResultsAsync;
-            var zaVracanje = users.FirstOrDefault();
-            if(zaVracanje!=null)
-                return Ok(zaVracanje);
-            else
-                return BadRequest("Nema drzave");
+                        .ResultsAsync;*/
+            var d= await _client.Cypher
+                                .Match("(d:Drzava)")
+                                .Where((Drzava d)=>d.Naziv==drzava)
+                                .Return(d=>d.As<Drzava>()).ResultsAsync;
+
+            return Ok(d.FirstOrDefault());
         }
     }
 }
