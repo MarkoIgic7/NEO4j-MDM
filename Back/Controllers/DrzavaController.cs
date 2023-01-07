@@ -48,8 +48,24 @@ namespace NeoProba.Controllers
                                 .Match("(d:Drzava)")
                                 .Where((Drzava d)=>d.Naziv==drzava)
                                 .Return(d=>d.As<Drzava>()).ResultsAsync;
-
-            return Ok(d.FirstOrDefault());
+            if(d.FirstOrDefault()!=null)
+            {
+                return Ok(d.FirstOrDefault());
+            }
+            else
+            {
+                return BadRequest("Ne postoji drzava");
+            }
+        }
+        [HttpGet]
+        [Route("PreuzmiSveDrzave")]
+        public async Task<ActionResult> PreuzmiSveDrzave()
+        {
+            var drzave = await _client.Cypher
+                                .Match("(d:Drzava)")
+                                .Return(d=>d.As<Drzava>())
+                                .ResultsAsync;
+            return Ok(drzave);
         }
     }
 }

@@ -79,5 +79,16 @@ namespace NeoProba.Controllers
             }
             
         }
+        [HttpGet]
+        [Route("PreuzmiSveGradoveDrzave/{idDrzave}")]
+        public async Task<ActionResult> PreuzmiSveGradoveDrzave(string idDrzave)
+        {
+            var gradovi = await _client.Cypher.Match("(gr:Grad)-[r:seNalazi]->(dr:Drzava)")
+                                .Where((Drzava dr)=> dr.Id==idDrzave)
+                                .Return(gr => gr.As<Grad>())
+                                .ResultsAsync;
+        
+            return Ok(gradovi);
+        }
     }
 }
