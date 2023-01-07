@@ -170,7 +170,100 @@ namespace NeoProba.Controllers
                 }
                 else
                 {
-                    return Ok("drzava else");
+                    if(String.IsNullOrWhiteSpace(gradId))
+                    {
+                        string[] pojedinacniID = listaOblasti.Split("#");
+                        List<string> programi= new List<string>();
+                        List<Program> deserializedProg= new List<Program>();
+
+                        foreach(string s in pojedinacniID)
+                        {
+                            var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                        .Where((Oblast o, Drzava d)=>o.Id==s && d.Id==drzavaId)
+                                                        .Return(p=>p.As<Program>())
+                                                        .ResultsAsync;
+                            foreach (var r in res)
+                                if(!programi.Contains(System.Text.Json.JsonSerializer.Serialize<Program>(r)))
+                                    {
+                                        programi.Add(System.Text.Json.JsonSerializer.Serialize<Program>(r));
+                                        deserializedProg.Add(r);
+                                    }
+                        }
+                    
+                        return Ok(deserializedProg);
+                    }
+                    else
+                    {
+                        if(String.IsNullOrWhiteSpace(uniId))
+                        {
+                            string[] pojedinacniID = listaOblasti.Split("#");
+                            List<string> programi= new List<string>();
+                            List<Program> deserializedProg= new List<Program>();
+
+                            foreach(string s in pojedinacniID)
+                            {
+                                var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                            .Where((Oblast o, Drzava d,Grad g)=>o.Id==s && d.Id==drzavaId && g.Id==gradId)
+                                                            .Return(p=>p.As<Program>())
+                                                            .ResultsAsync;
+                                foreach (var r in res)
+                                    if(!programi.Contains(System.Text.Json.JsonSerializer.Serialize<Program>(r)))
+                                        {
+                                            programi.Add(System.Text.Json.JsonSerializer.Serialize<Program>(r));
+                                            deserializedProg.Add(r);
+                                        }
+                            }
+                    
+                            return Ok(deserializedProg);
+                        }
+                        else
+                        {
+                            if(String.IsNullOrWhiteSpace(nivo))
+                            {
+                                string[] pojedinacniID = listaOblasti.Split("#");
+                                List<string> programi= new List<string>();
+                                List<Program> deserializedProg= new List<Program>();
+
+                                foreach(string s in pojedinacniID)
+                                {
+                                    var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                                .Where((Oblast o, Drzava d,Grad g,Univerzitet u)=>o.Id==s && d.Id==drzavaId && g.Id==gradId && u.Id==uniId)
+                                                                .Return(p=>p.As<Program>())
+                                                                .ResultsAsync;
+                                    foreach (var r in res)
+                                        if(!programi.Contains(System.Text.Json.JsonSerializer.Serialize<Program>(r)))
+                                            {
+                                                programi.Add(System.Text.Json.JsonSerializer.Serialize<Program>(r));
+                                                deserializedProg.Add(r);
+                                            }
+                                }
+                        
+                                return Ok(deserializedProg);
+                            }
+                            else
+                            {
+                                string[] pojedinacniID = listaOblasti.Split("#");
+                                List<string> programi= new List<string>();
+                                List<Program> deserializedProg= new List<Program>();
+
+                                foreach(string s in pojedinacniID)
+                                {
+                                    var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                                .Where((Oblast o, Drzava d,Grad g,Univerzitet u,Program p)=>o.Id==s && d.Id==drzavaId && g.Id==gradId && u.Id==uniId && p.NivoStudija==nivo)
+                                                                .Return(p=>p.As<Program>())
+                                                                .ResultsAsync;
+                                    foreach (var r in res)
+                                        if(!programi.Contains(System.Text.Json.JsonSerializer.Serialize<Program>(r)))
+                                            {
+                                                programi.Add(System.Text.Json.JsonSerializer.Serialize<Program>(r));
+                                                deserializedProg.Add(r);
+                                            }
+                                }
+                        
+                                return Ok(deserializedProg);
+                            }
+                        }
+                    }
                 }
                 
             }
