@@ -4,7 +4,7 @@ namespace Models
 {
     public class Program
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Naziv { get; set; }
         public int Trajanje { get; set; }
         public int BrojMesta { get; set; }
