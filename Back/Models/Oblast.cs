@@ -4,7 +4,7 @@ namespace Models
 {
     public class Oblast
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Naziv { get; set; }
 
         //public List<Program> Programi { get; set; }
