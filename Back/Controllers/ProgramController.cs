@@ -8,6 +8,7 @@ using Models;
 using Neo4jClient;
 using Neo4jClient.Cypher;
 using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace NeoProba.Controllers
 {
@@ -43,18 +44,137 @@ namespace NeoProba.Controllers
             string[] pojedinacniID = oblasti.Split("#");
             foreach(string s in pojedinacniID)
             {
-                await _client.Cypher.Match("(p:Program),(o:Oblast)")
-                                    .Where((Program p, Oblast o)=> o.Id==s)
-                                    .Create("(p)-[r:Obuhvata]->(o)")
-                                    .Create("(p)<-[r1:PripadaProgramu]-(o)")
+                await _client.Cypher.Match("(pr:Program),(o:Oblast)")
+                                    .Where((Program pr, Oblast o)=> o.Id==s && pr.Id==p.Id)
+                                    .Create("(pr)-[r:Obuhvata]->(o)")
+                                    .Create("(pr)<-[r1:PripadaProgramu]-(o)")
                                     .ExecuteWithoutResultsAsync();
             }
-            await _client.Cypher.Match("(u:Univerzitet),(p:Program)")
-                                .Where((Univerzitet u,Program p)=> u.Id==idUniverziteta)
-                                .Create("(u)-[r:Sadrzi]->(p)")
+            await _client.Cypher.Match("(u:Univerzitet),(pr:Program)")
+                                .Where((Univerzitet u,Program pr)=> u.Id==idUniverziteta && pr.Id==p.Id)
+                                .Create("(u)-[r:Sadrzi]->(pr)")
                                 .ExecuteWithoutResultsAsync();
 
             return Ok();
+        }
+        [HttpGet]
+        [Route("VratiSvePrograme/{drzavaId}/{gradId}/{uniId}/{nivo}/{listaOblasti}")]
+        public async Task<ActionResult> VratiSvePrograme(string drzavaId,string gradId,string uniId,string nivo,string listaOblasti)
+        {
+            if(String.IsNullOrWhiteSpace(listaOblasti)) 
+            {
+                if(String.IsNullOrWhiteSpace(drzavaId))
+                {
+                    return BadRequest("morate uneti barem drzavu");
+                }
+                else
+                {
+                    if(String.IsNullOrWhiteSpace(gradId))// preetraga samo po drzavi
+                    {
+                        var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                    .Where((Drzava d)=>d.Id==drzavaId)
+                                                    .Return(p=>p.As<Program>())
+                                                    .ResultsAsync;
+                        return Ok(res.Select(r=>
+                         new{
+                            id=r.Id,
+                            naziv=r.Naziv,
+                            trajanje=r.Trajanje,
+                            brojMesta=r.BrojMesta,
+                            nivoStudija=r.NivoStudija,
+                            opis=r.Opis,
+                            jezik=r.Jezik
+                        }));
+                    }
+                    else{
+                        if(String.IsNullOrWhiteSpace(uniId))// grad i drzava
+                        {
+                            var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                    .Where((Drzava d,Grad g)=>d.Id==drzavaId && g.Id==gradId)
+                                                    .Return(p=>p.As<Program>())
+                                                    .ResultsAsync;
+                        return Ok(res.Select(r=>
+                         new{
+                            id=r.Id,
+                            naziv=r.Naziv,
+                            trajanje=r.Trajanje,
+                            brojMesta=r.BrojMesta,
+                            nivoStudija=r.NivoStudija,
+                            opis=r.Opis,
+                            jezik=r.Jezik
+                        }));
+                        }
+                        else
+                        {
+                            if(String.IsNullOrWhiteSpace(nivo)) // grad drzava i uni
+                            {
+                                var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                    .Where((Drzava d,Grad g,Univerzitet u)=>d.Id==drzavaId && g.Id==gradId && u.Id==uniId)
+                                                    .Return(p=>p.As<Program>())
+                                                    .ResultsAsync;
+                            return Ok(res.Select(r=>
+                            new{
+                                id=r.Id,
+                                naziv=r.Naziv,
+                                trajanje=r.Trajanje,
+                                brojMesta=r.BrojMesta,
+                                nivoStudija=r.NivoStudija,
+                                opis=r.Opis,
+                                jezik=r.Jezik
+                                }));
+                            }
+                            else // po svemu sem oblasti
+                            {
+                                var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                    .Where((Drzava d,Grad g,Univerzitet u,Program p)=>d.Id==drzavaId && g.Id==gradId && u.Id==uniId && p.NivoStudija==nivo)
+                                                    .Return(p=>p.As<Program>())
+                                                    .ResultsAsync;
+                                return Ok(res.Select(r=>
+                                new{
+                                    id=r.Id,
+                                    naziv=r.Naziv,
+                                    trajanje=r.Trajanje,
+                                    brojMesta=r.BrojMesta,
+                                    nivoStudija=r.NivoStudija,
+                                    opis=r.Opis,
+                                    jezik=r.Jezik
+                                    }));
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            else{
+                if(String.IsNullOrWhiteSpace(drzavaId)) //samo po oblastima
+                {
+                    string[] pojedinacniID = listaOblasti.Split("#");
+                    List<string> programi= new List<string>();
+                    List<Program> deserializedProg= new List<Program>();
+
+                    foreach(string s in pojedinacniID)
+                    {
+                        var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                    .Where((Oblast o)=>o.Id==s)
+                                                    .Return(p=>p.As<Program>())
+                                                    .ResultsAsync;
+                        foreach (var r in res)
+                            if(!programi.Contains(System.Text.Json.JsonSerializer.Serialize<Program>(r)))
+                                {
+                                    programi.Add(System.Text.Json.JsonSerializer.Serialize<Program>(r));
+                                    deserializedProg.Add(r);
+                                }
+                    }
+                    
+                        return Ok(deserializedProg);
+                }
+                else
+                {
+                    return Ok("drzava else");
+                }
+                
+            }
+        
         }
     }
 }

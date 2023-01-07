@@ -58,5 +58,16 @@ namespace NeoProba.Controllers
                                 .ExecuteWithoutResultsAsync();
             return Ok("Univerzitet dodat gradu");
         }
+
+        [HttpGet]
+        [Route("VratiUniverziteteGrada/{gradId}")]
+        public async Task<ActionResult> VratiUniverziteteGrada(string gradId)
+        {
+            var unis= await _client.Cypher.Match("(u:Univerzitet)-[r:Pripada]->(g:Grad)")
+                                    .Where((Grad g)=>g.Id==gradId)
+                                    .Return(u=>u.As<Univerzitet>())
+                                    .ResultsAsync;
+            return Ok(unis);
+        }
     }
 }
