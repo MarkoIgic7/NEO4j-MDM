@@ -77,26 +77,9 @@ namespace NeoProba.Controllers
                                                         .Where((Drzava d)=>d.Id==drzavaId)
                                                         .Return(p=>p.As<Program>())
                                                         .ResultsAsync;
-                            return Ok(res.Select(r=>
-                            new{
-                                id=r.Id,
-                                naziv=r.Naziv,
-                                trajanje=r.Trajanje,
-                                brojMesta=r.BrojMesta,
-                                nivoStudija=r.NivoStudija,
-                                opis=r.Opis,
-                                jezik=r.Jezik
-                            }));
-                        }
-                        else
-                        {
-                            if(String.IsNullOrWhiteSpace(uniId))// grad i drzava
-                                {
-                                    var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
-                                                            .Where((Drzava d,Grad g)=>d.Id==drzavaId && g.Id==gradId)
-                                                            .Return(p=>p.As<Program>())
-                                                            .ResultsAsync;
-                                    return Ok(res.Select(r=>
+                            if(res.Count()!=0)
+                            {
+                                 return Ok(res.Select(r=>
                                     new{
                                         id=r.Id,
                                         naziv=r.Naziv,
@@ -106,6 +89,38 @@ namespace NeoProba.Controllers
                                         opis=r.Opis,
                                         jezik=r.Jezik
                                     }));
+                            }
+                            else
+                            {
+                                return BadRequest("Nema rezultata pretrage");
+                            }
+                           
+                        }
+                        else
+                        {
+                            if(String.IsNullOrWhiteSpace(uniId))// grad i drzava
+                                {
+                                    var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                            .Where((Drzava d,Grad g)=>d.Id==drzavaId && g.Id==gradId)
+                                                            .Return(p=>p.As<Program>())
+                                                            .ResultsAsync;
+                                    if(res.Count()!=0)
+                                    {
+                                        return Ok(res.Select(r=>
+                                            new{
+                                                id=r.Id,
+                                                naziv=r.Naziv,
+                                                trajanje=r.Trajanje,
+                                                brojMesta=r.BrojMesta,
+                                                nivoStudija=r.NivoStudija,
+                                                opis=r.Opis,
+                                                jezik=r.Jezik
+                                            }));
+                                    }
+                                    else
+                                    {
+                                        return BadRequest("Nema rezultata pretrage");
+                                    }
                                 }
                             else
                             {
@@ -113,16 +128,23 @@ namespace NeoProba.Controllers
                                                     .Where((Drzava d,Grad g,Univerzitet u)=>d.Id==drzavaId && g.Id==gradId && u.Id==uniId)
                                                     .Return(p=>p.As<Program>())
                                                     .ResultsAsync;
-                                return Ok(res.Select(r=>
-                                new{
-                                    id=r.Id,
-                                    naziv=r.Naziv,
-                                    trajanje=r.Trajanje,
-                                    brojMesta=r.BrojMesta,
-                                    nivoStudija=r.NivoStudija,
-                                    opis=r.Opis,
-                                    jezik=r.Jezik
-                                    }));
+                                if(res.Count()!=0)
+                                {
+                                    return Ok(res.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
+                                }
+                                else
+                                {
+                                    return BadRequest("Nema rezultata pretrage");
+                                }
                             }
                         }
 
@@ -136,16 +158,23 @@ namespace NeoProba.Controllers
                                                     .Where((Program p)=>p.NivoStudija==nivo)
                                                     .Return(p=>p.As<Program>())
                                                     .ResultsAsync;
-                                return Ok(res.Select(r=>
-                                new{
-                                    id=r.Id,
-                                    naziv=r.Naziv,
-                                    trajanje=r.Trajanje,
-                                    brojMesta=r.BrojMesta,
-                                    nivoStudija=r.NivoStudija,
-                                    opis=r.Opis,
-                                    jezik=r.Jezik
-                                    }));
+                                if(res.Count()!=0)
+                                {
+                                    return Ok(res.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
+                                }
+                                else
+                                {
+                                    return BadRequest("Nema rezultata pretrage");
+                                }
                     }
                     else
                     {
@@ -155,16 +184,23 @@ namespace NeoProba.Controllers
                                                     .Where((Drzava d,Program p)=>d.Id==drzavaId && p.NivoStudija==nivo)
                                                     .Return(p=>p.As<Program>())
                                                     .ResultsAsync;
-                                return Ok(res.Select(r=>
-                                new{
-                                    id=r.Id,
-                                    naziv=r.Naziv,
-                                    trajanje=r.Trajanje,
-                                    brojMesta=r.BrojMesta,
-                                    nivoStudija=r.NivoStudija,
-                                    opis=r.Opis,
-                                    jezik=r.Jezik
-                                    }));
+                                if(res.Count()!=0)
+                                {
+                                    return Ok(res.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
+                                }
+                                else
+                                {
+                                    return BadRequest("Nema rezultata pretrage");
+                                }
                         }
                         else
                         {
@@ -174,16 +210,23 @@ namespace NeoProba.Controllers
                                                     .Where((Drzava d,Grad g,Program p)=>d.Id==drzavaId && g.Id==gradId && p.NivoStudija==nivo)
                                                     .Return(p=>p.As<Program>())
                                                     .ResultsAsync;
-                                return Ok(res.Select(r=>
-                                new{
-                                    id=r.Id,
-                                    naziv=r.Naziv,
-                                    trajanje=r.Trajanje,
-                                    brojMesta=r.BrojMesta,
-                                    nivoStudija=r.NivoStudija,
-                                    opis=r.Opis,
-                                    jezik=r.Jezik
-                                    }));
+                                if(res.Count()!=0)
+                                {
+                                    return Ok(res.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
+                                }
+                                else
+                                {
+                                    return BadRequest("Nema rezultata pretrage");
+                                }
                             }
                             else
                             {
@@ -191,16 +234,23 @@ namespace NeoProba.Controllers
                                                     .Where((Drzava d,Grad g,Univerzitet u,Program p)=>d.Id==drzavaId && g.Id==gradId && u.Id==uniId && p.NivoStudija==nivo)
                                                     .Return(p=>p.As<Program>())
                                                     .ResultsAsync;
-                                return Ok(res.Select(r=>
-                                new{
-                                    id=r.Id,
-                                    naziv=r.Naziv,
-                                    trajanje=r.Trajanje,
-                                    brojMesta=r.BrojMesta,
-                                    nivoStudija=r.NivoStudija,
-                                    opis=r.Opis,
-                                    jezik=r.Jezik
-                                    }));
+                                if(res.Count()!=0)
+                                {
+                                    return Ok(res.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
+                                }
+                                else
+                                {
+                                    return BadRequest("Nema rezultata pretrage");
+                                }
                             }
                         }
                     }
@@ -229,8 +279,16 @@ namespace NeoProba.Controllers
                                         deserializedProg.Add(r);
                                     }
                         }
-                    
-                        return Ok(deserializedProg);
+                        
+                        if(deserializedProg.Count()!=0)
+                        {
+                            return Ok(deserializedProg);
+                        }
+                        else
+                        {
+                            return BadRequest("Nema rezultata pretrage");
+                        }
+                        
                     }
                     else
                     {
@@ -254,7 +312,14 @@ namespace NeoProba.Controllers
                                         }
                             }
                     
-                            return Ok(deserializedProg);
+                            if(deserializedProg.Count()!=0)
+                            {
+                                return Ok(deserializedProg);
+                            }
+                            else
+                            {
+                                return BadRequest("Nema rezultata pretrage");
+                            }
                         }
                         else
                         {
@@ -278,7 +343,14 @@ namespace NeoProba.Controllers
                                             }
                                 }
                                 
-                                return Ok(deserializedProg);
+                                if(deserializedProg.Count()!=0)
+                                {
+                                    return Ok(deserializedProg);
+                                }
+                                else
+                                {
+                                    return BadRequest("Nema rezultata pretrage");
+                                }
                             }
                             else
                             {
@@ -300,7 +372,14 @@ namespace NeoProba.Controllers
                                             }
                                 }
                                 
-                                return Ok(deserializedProg);
+                                if(deserializedProg.Count()!=0)
+                                {
+                                    return Ok(deserializedProg);
+                                }
+                                else
+                                {
+                                    return BadRequest("Nema rezultata pretrage");
+                                }
                             }
                         }
                     }
@@ -327,7 +406,14 @@ namespace NeoProba.Controllers
                                     }
                         }
                     
-                        return Ok(deserializedProg);
+                       if(deserializedProg.Count()!=0)
+                        {
+                            return Ok(deserializedProg);
+                        }
+                        else
+                        {
+                            return BadRequest("Nema rezultata pretrage");
+                        }
                     }
                     else
                     {
@@ -351,7 +437,14 @@ namespace NeoProba.Controllers
                                         }
                             }
                         
-                            return Ok(deserializedProg);
+                            if(deserializedProg.Count()!=0)
+                            {
+                                return Ok(deserializedProg);
+                            }
+                            else
+                            {
+                                return BadRequest("Nema rezultata pretrage");
+                            }
                         }
                         else
                         {
@@ -375,7 +468,14 @@ namespace NeoProba.Controllers
                                             }
                                 }
                             
-                                return Ok(deserializedProg);
+                                if(deserializedProg.Count()!=0)
+                                {
+                                    return Ok(deserializedProg);
+                                }
+                                else
+                                {
+                                    return BadRequest("Nema rezultata pretrage");
+                                }
                             }
                             else
                             {
@@ -397,7 +497,14 @@ namespace NeoProba.Controllers
                                             }
                                 }
                             
-                                return Ok(deserializedProg);
+                                if(deserializedProg.Count()!=0)
+                                {
+                                    return Ok(deserializedProg);
+                                }
+                                else
+                                {
+                                    return BadRequest("Nema rezultata pretrage");
+                                }
                             }
                         }
                     }
