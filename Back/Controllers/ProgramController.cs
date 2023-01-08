@@ -61,57 +61,22 @@ namespace NeoProba.Controllers
         [Route("VratiSvePrograme/{drzavaId}/{gradId}/{uniId}/{nivo}/{listaOblasti}")]
         public async Task<ActionResult> VratiSvePrograme(string drzavaId,string gradId,string uniId,string nivo,string listaOblasti)
         {
-            if(listaOblasti=="nema") 
+            if (listaOblasti=="nema")
             {
-                if(String.IsNullOrWhiteSpace(drzavaId))
+                if(String.IsNullOrWhiteSpace(nivo))
                 {
-                    return BadRequest("morate uneti barem drzavu");
-                }
-                else
-                {
-                    if(String.IsNullOrWhiteSpace(gradId))// preetraga samo po drzavi
+                    if(String.IsNullOrWhiteSpace(drzavaId))
                     {
-                        var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
-                                                    .Where((Drzava d)=>d.Id==drzavaId)
-                                                    .Return(p=>p.As<Program>())
-                                                    .ResultsAsync;
-                        return Ok(res.Select(r=>
-                         new{
-                            id=r.Id,
-                            naziv=r.Naziv,
-                            trajanje=r.Trajanje,
-                            brojMesta=r.BrojMesta,
-                            nivoStudija=r.NivoStudija,
-                            opis=r.Opis,
-                            jezik=r.Jezik
-                        }));
+                        return BadRequest("Morate uneti neki parametar za pretragu!");
                     }
-                    else{
-                        if(String.IsNullOrWhiteSpace(uniId))// grad i drzava
+                    else
+                    {
+                         if(String.IsNullOrWhiteSpace(gradId))// preetraga samo po drzavi
                         {
                             var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
-                                                    .Where((Drzava d,Grad g)=>d.Id==drzavaId && g.Id==gradId)
-                                                    .Return(p=>p.As<Program>())
-                                                    .ResultsAsync;
-                        return Ok(res.Select(r=>
-                         new{
-                            id=r.Id,
-                            naziv=r.Naziv,
-                            trajanje=r.Trajanje,
-                            brojMesta=r.BrojMesta,
-                            nivoStudija=r.NivoStudija,
-                            opis=r.Opis,
-                            jezik=r.Jezik
-                        }));
-                        }
-                        else
-                        {
-                            if(String.IsNullOrWhiteSpace(nivo)) // grad drzava i uni
-                            {
-                                var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
-                                                    .Where((Drzava d,Grad g,Univerzitet u)=>d.Id==drzavaId && g.Id==gradId && u.Id==uniId)
-                                                    .Return(p=>p.As<Program>())
-                                                    .ResultsAsync;
+                                                        .Where((Drzava d)=>d.Id==drzavaId)
+                                                        .Return(p=>p.As<Program>())
+                                                        .ResultsAsync;
                             return Ok(res.Select(r=>
                             new{
                                 id=r.Id,
@@ -121,9 +86,106 @@ namespace NeoProba.Controllers
                                 nivoStudija=r.NivoStudija,
                                 opis=r.Opis,
                                 jezik=r.Jezik
-                                }));
+                            }));
+                        }
+                        else
+                        {
+                            if(String.IsNullOrWhiteSpace(uniId))// grad i drzava
+                                {
+                                    var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                            .Where((Drzava d,Grad g)=>d.Id==drzavaId && g.Id==gradId)
+                                                            .Return(p=>p.As<Program>())
+                                                            .ResultsAsync;
+                                    return Ok(res.Select(r=>
+                                    new{
+                                        id=r.Id,
+                                        naziv=r.Naziv,
+                                        trajanje=r.Trajanje,
+                                        brojMesta=r.BrojMesta,
+                                        nivoStudija=r.NivoStudija,
+                                        opis=r.Opis,
+                                        jezik=r.Jezik
+                                    }));
+                                }
+                            else
+                            {
+                                var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                    .Where((Drzava d,Grad g,Univerzitet u)=>d.Id==drzavaId && g.Id==gradId && u.Id==uniId)
+                                                    .Return(p=>p.As<Program>())
+                                                    .ResultsAsync;
+                                return Ok(res.Select(r=>
+                                new{
+                                    id=r.Id,
+                                    naziv=r.Naziv,
+                                    trajanje=r.Trajanje,
+                                    brojMesta=r.BrojMesta,
+                                    nivoStudija=r.NivoStudija,
+                                    opis=r.Opis,
+                                    jezik=r.Jezik
+                                    }));
                             }
-                            else // po svemu sem oblasti
+                        }
+
+                    }
+                }
+                else
+                {
+                    if(String.IsNullOrWhiteSpace(drzavaId))
+                    {
+                        var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                    .Where((Program p)=>p.NivoStudija==nivo)
+                                                    .Return(p=>p.As<Program>())
+                                                    .ResultsAsync;
+                                return Ok(res.Select(r=>
+                                new{
+                                    id=r.Id,
+                                    naziv=r.Naziv,
+                                    trajanje=r.Trajanje,
+                                    brojMesta=r.BrojMesta,
+                                    nivoStudija=r.NivoStudija,
+                                    opis=r.Opis,
+                                    jezik=r.Jezik
+                                    }));
+                    }
+                    else
+                    {
+                        if(String.IsNullOrWhiteSpace(gradId))
+                        {
+                            var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                    .Where((Drzava d,Program p)=>d.Id==drzavaId && p.NivoStudija==nivo)
+                                                    .Return(p=>p.As<Program>())
+                                                    .ResultsAsync;
+                                return Ok(res.Select(r=>
+                                new{
+                                    id=r.Id,
+                                    naziv=r.Naziv,
+                                    trajanje=r.Trajanje,
+                                    brojMesta=r.BrojMesta,
+                                    nivoStudija=r.NivoStudija,
+                                    opis=r.Opis,
+                                    jezik=r.Jezik
+                                    }));
+                        }
+                        else
+                        {
+                            if(String.IsNullOrWhiteSpace(uniId))
+                            {
+                                var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                    .Where((Drzava d,Grad g,Program p)=>d.Id==drzavaId && g.Id==gradId && p.NivoStudija==nivo)
+                                                    .Return(p=>p.As<Program>())
+                                                    .ResultsAsync;
+                                return Ok(res.Select(r=>
+                                new{
+                                    id=r.Id,
+                                    naziv=r.Naziv,
+                                    trajanje=r.Trajanje,
+                                    brojMesta=r.BrojMesta,
+                                    nivoStudija=r.NivoStudija,
+                                    opis=r.Opis,
+                                    jezik=r.Jezik
+                                    }));
+                            }
+                            else
                             {
                                 var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
                                                     .Where((Drzava d,Grad g,Univerzitet u,Program p)=>d.Id==drzavaId && g.Id==gradId && u.Id==uniId && p.NivoStudija==nivo)
@@ -141,36 +203,14 @@ namespace NeoProba.Controllers
                                     }));
                             }
                         }
-                        
                     }
                 }
             }
-            else{
-                if(String.IsNullOrWhiteSpace(drzavaId)) //samo po oblastima
+            else
+            {
+                if(String.IsNullOrWhiteSpace(nivo))
                 {
-                    string[] pojedinacniID = listaOblasti.Split("#");
-                    List<string> programi= new List<string>();
-                    List<Program> deserializedProg= new List<Program>();
-
-                    foreach(string s in pojedinacniID)
-                    {
-                        var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
-                                                    .Where((Oblast o)=>o.Id==s)
-                                                    .Return(p=>p.As<Program>())
-                                                    .ResultsAsync;
-                        foreach (var r in res)
-                            if(!programi.Contains(System.Text.Json.JsonSerializer.Serialize<Program>(r)))
-                                {
-                                    programi.Add(System.Text.Json.JsonSerializer.Serialize<Program>(r));
-                                    deserializedProg.Add(r);
-                                }
-                    }
-                    
-                        return Ok(deserializedProg);
-                }
-                else
-                {
-                    if(String.IsNullOrWhiteSpace(gradId))
+                    if(String.IsNullOrWhiteSpace(drzavaId))
                     {
                         string[] pojedinacniID = listaOblasti.Split("#");
                         List<string> programi= new List<string>();
@@ -179,7 +219,7 @@ namespace NeoProba.Controllers
                         foreach(string s in pojedinacniID)
                         {
                             var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
-                                                        .Where((Oblast o, Drzava d)=>o.Id==s && d.Id==drzavaId)
+                                                        .Where((Oblast o)=>o.Id==s)
                                                         .Return(p=>p.As<Program>())
                                                         .ResultsAsync;
                             foreach (var r in res)
@@ -194,7 +234,7 @@ namespace NeoProba.Controllers
                     }
                     else
                     {
-                        if(String.IsNullOrWhiteSpace(uniId))
+                        if(String.IsNullOrWhiteSpace(gradId))
                         {
                             string[] pojedinacniID = listaOblasti.Split("#");
                             List<string> programi= new List<string>();
@@ -203,7 +243,7 @@ namespace NeoProba.Controllers
                             foreach(string s in pojedinacniID)
                             {
                                 var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
-                                                            .Where((Oblast o, Drzava d,Grad g)=>o.Id==s && d.Id==drzavaId && g.Id==gradId)
+                                                            .Where((Oblast o,Drzava d)=>o.Id==s && d.Id==drzavaId)
                                                             .Return(p=>p.As<Program>())
                                                             .ResultsAsync;
                                 foreach (var r in res)
@@ -218,7 +258,7 @@ namespace NeoProba.Controllers
                         }
                         else
                         {
-                            if(String.IsNullOrWhiteSpace(nivo))
+                            if(String.IsNullOrWhiteSpace(uniId))
                             {
                                 string[] pojedinacniID = listaOblasti.Split("#");
                                 List<string> programi= new List<string>();
@@ -227,7 +267,7 @@ namespace NeoProba.Controllers
                                 foreach(string s in pojedinacniID)
                                 {
                                     var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
-                                                                .Where((Oblast o, Drzava d,Grad g,Univerzitet u)=>o.Id==s && d.Id==drzavaId && g.Id==gradId && u.Id==uniId)
+                                                                .Where((Oblast o,Drzava d,Grad g)=>o.Id==s&&d.Id==drzavaId&&g.Id==gradId)
                                                                 .Return(p=>p.As<Program>())
                                                                 .ResultsAsync;
                                     foreach (var r in res)
@@ -237,7 +277,7 @@ namespace NeoProba.Controllers
                                                 deserializedProg.Add(r);
                                             }
                                 }
-                        
+                                
                                 return Ok(deserializedProg);
                             }
                             else
@@ -249,7 +289,7 @@ namespace NeoProba.Controllers
                                 foreach(string s in pojedinacniID)
                                 {
                                     var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
-                                                                .Where((Oblast o, Drzava d,Grad g,Univerzitet u,Program p)=>o.Id==s && d.Id==drzavaId && g.Id==gradId && u.Id==uniId && p.NivoStudija==nivo)
+                                                                .Where((Oblast o,Drzava d,Grad g,Univerzitet u)=>o.Id==s&&d.Id==drzavaId&&g.Id==gradId&&u.Id==uniId)
                                                                 .Return(p=>p.As<Program>())
                                                                 .ResultsAsync;
                                     foreach (var r in res)
@@ -259,13 +299,109 @@ namespace NeoProba.Controllers
                                                 deserializedProg.Add(r);
                                             }
                                 }
-                        
+                                
                                 return Ok(deserializedProg);
                             }
                         }
                     }
                 }
-                
+                else
+                {
+                    if(String.IsNullOrWhiteSpace(drzavaId))
+                    {
+                        string[] pojedinacniID = listaOblasti.Split("#");
+                        List<string> programi= new List<string>();
+                        List<Program> deserializedProg= new List<Program>();
+
+                        foreach(string s in pojedinacniID)
+                        {
+                            var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                        .Where((Oblast o,Program p)=>o.Id==s&&p.NivoStudija==nivo)
+                                                        .Return(p=>p.As<Program>())
+                                                        .ResultsAsync;
+                            foreach (var r in res)
+                                if(!programi.Contains(System.Text.Json.JsonSerializer.Serialize<Program>(r)))
+                                    {
+                                        programi.Add(System.Text.Json.JsonSerializer.Serialize<Program>(r));
+                                        deserializedProg.Add(r);
+                                    }
+                        }
+                    
+                        return Ok(deserializedProg);
+                    }
+                    else
+                    {
+                        if(String.IsNullOrWhiteSpace(gradId))
+                        {
+                            string[] pojedinacniID = listaOblasti.Split("#");
+                            List<string> programi= new List<string>();
+                            List<Program> deserializedProg= new List<Program>();
+
+                            foreach(string s in pojedinacniID)
+                            {
+                                var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                            .Where((Oblast o,Program p,Drzava d)=>d.Id==drzavaId&& o.Id==s&&p.NivoStudija==nivo)
+                                                            .Return(p=>p.As<Program>())
+                                                            .ResultsAsync;
+                                foreach (var r in res)
+                                    if(!programi.Contains(System.Text.Json.JsonSerializer.Serialize<Program>(r)))
+                                        {
+                                            programi.Add(System.Text.Json.JsonSerializer.Serialize<Program>(r));
+                                            deserializedProg.Add(r);
+                                        }
+                            }
+                        
+                            return Ok(deserializedProg);
+                        }
+                        else
+                        {
+                            if(String.IsNullOrWhiteSpace(uniId))
+                            {
+                                string[] pojedinacniID = listaOblasti.Split("#");
+                                List<string> programi= new List<string>();
+                                List<Program> deserializedProg= new List<Program>();
+
+                                foreach(string s in pojedinacniID)
+                                {
+                                    var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                                .Where((Oblast o,Program p,Drzava d,Grad g)=>d.Id==drzavaId&& o.Id==s&&p.NivoStudija==nivo&&g.Id==gradId)
+                                                                .Return(p=>p.As<Program>())
+                                                                .ResultsAsync;
+                                    foreach (var r in res)
+                                        if(!programi.Contains(System.Text.Json.JsonSerializer.Serialize<Program>(r)))
+                                            {
+                                                programi.Add(System.Text.Json.JsonSerializer.Serialize<Program>(r));
+                                                deserializedProg.Add(r);
+                                            }
+                                }
+                            
+                                return Ok(deserializedProg);
+                            }
+                            else
+                            {
+                                string[] pojedinacniID = listaOblasti.Split("#");
+                                List<string> programi= new List<string>();
+                                List<Program> deserializedProg= new List<Program>();
+
+                                foreach(string s in pojedinacniID)
+                                {
+                                    var res= await _client.Cypher.Match("(o:Oblast)-[r5:PripadaProgramu]->(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
+                                                                .Where((Oblast o,Program p,Drzava d,Grad g,Univerzitet u)=>d.Id==drzavaId&& o.Id==s&&p.NivoStudija==nivo&& g.Id==gradId&&u.Id==uniId)
+                                                                .Return(p=>p.As<Program>())
+                                                                .ResultsAsync;
+                                    foreach (var r in res)
+                                        if(!programi.Contains(System.Text.Json.JsonSerializer.Serialize<Program>(r)))
+                                            {
+                                                programi.Add(System.Text.Json.JsonSerializer.Serialize<Program>(r));
+                                                deserializedProg.Add(r);
+                                            }
+                                }
+                            
+                                return Ok(deserializedProg);
+                            }
+                        }
+                    }
+                }
             }
         
         }
