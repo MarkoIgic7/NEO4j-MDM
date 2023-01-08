@@ -61,7 +61,7 @@ namespace NeoProba.Controllers
         [Route("VratiSvePrograme/{drzavaId}/{gradId}/{uniId}/{nivo}/{listaOblasti}")]
         public async Task<ActionResult> VratiSvePrograme(string drzavaId,string gradId,string uniId,string nivo,string listaOblasti)
         {
-            if(String.IsNullOrWhiteSpace(listaOblasti)) 
+            if(listaOblasti=="nema") 
             {
                 if(String.IsNullOrWhiteSpace(drzavaId))
                 {
