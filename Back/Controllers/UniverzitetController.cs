@@ -69,5 +69,29 @@ namespace NeoProba.Controllers
                                     .ResultsAsync;
             return Ok(unis);
         }
+        [HttpGet]
+        [Route("VratiUniverzitet/{idPrograma}")]
+        public async Task<ActionResult> VratiUniverzitet(string idPrograma)
+        {
+            var univerzitet = await _client.Cypher.Match("(u:Univerzitet)-[r:Sadrzi]->(p:Program)")
+                                                    .Where((Univerzitet u, Program p) =>p.Id==idPrograma)
+                                                    .Return(u => u.As<Univerzitet>())
+                                                    .ResultsAsync;
+            if(univerzitet!=null)
+            {
+                return Ok(univerzitet.Select(u => new{
+                    id = u.Id,
+                    naziv = u.Naziv,
+                    opis = u.Opis,
+                    kontakt = u.Kontakt,
+                    adresa = u.Adresa,
+                    skolarina = u.Skolarina
+                }));
+            }
+            else
+            {
+                return BadRequest("Ne postoji univerzitet sa tim programom");
+            }
+        }
     }
 }

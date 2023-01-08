@@ -58,6 +58,32 @@ namespace NeoProba.Controllers
             return Ok();
         }
         [HttpGet]
+        [Route("VratiProgram/{idPrograma}")]
+        public async Task<ActionResult> VratiProgram(string idPrograma)
+        {
+            var program = await _client.Cypher.Match("(p:Program)")
+                                        .Where((Program p)=> p.Id==idPrograma)
+                                        .Return(p => p.As<Program>())
+                                        .ResultsAsync;
+            if(program!=null)
+            {
+                return Ok(program.Select(r=>
+                            new{
+                                id=r.Id,
+                                naziv=r.Naziv,
+                                trajanje=r.Trajanje,
+                                brojMesta=r.BrojMesta,
+                                nivoStudija=r.NivoStudija,
+                                opis=r.Opis,
+                                jezik=r.Jezik
+                            }));
+            }
+            else
+            {
+                return BadRequest("Ne postoji program");
+            }
+        }
+        [HttpGet]
         [Route("VratiSvePrograme/{drzavaId}/{gradId}/{uniId}/{nivo}/{listaOblasti}")]
         public async Task<ActionResult> VratiSvePrograme(string drzavaId,string gradId,string uniId,string nivo,string listaOblasti)
         {
