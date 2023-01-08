@@ -2,7 +2,8 @@ namespace Models
 {
     public class Stipendija
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
+        public string Naziv { get; set; }
         public string Opis { get; set; }
         public string Uslovi { get; set; }
         public int Iznos { get; set; }
