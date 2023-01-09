@@ -48,16 +48,15 @@ namespace NeoProba.Controllers
         public async Task<ActionResult> VratiSveStipendije(string idDrzave,string idGrada,string idUniverziteta,string minIznos)
         {
             
-            
-            if(minIznos=="nema")
-            {
                 if(String.IsNullOrWhiteSpace(idDrzave))
                 {
-                    return BadRequest("Morate uneti neki parametar za pretragu");
+                    return BadRequest("Morate uneti drzavu");
                 }
                 else
                 {
-                    if(String.IsNullOrWhiteSpace(idGrada))
+                    if(minIznos=="nema")
+                    {
+                        if(String.IsNullOrWhiteSpace(idGrada))
                     {
                         var stipendije = await _client.Cypher.Match("(d:Drzava)<-[r1:seNalazi]-(g:Grad)<-[r2:Pripada]-(u:Univerzitet)-[r3:Daje]->(s:Stipendija)")
                                                     .Where((Drzava d) => d.Id==idDrzave)
@@ -103,32 +102,14 @@ namespace NeoProba.Controllers
                             {
                                 return BadRequest("Nema rezultata pretrage");
                             }
+                        
                         }
                     }
-                }
-                
-            }
-            else
-            {
-                int iznos = Int32.Parse(minIznos);
-                if(String.IsNullOrWhiteSpace(idDrzave))
-                {
-                    var stipendije = await _client.Cypher.Match("(d:Drzava)<-[r1:seNalazi]-(g:Grad)<-[r2:Pripada]-(u:Univerzitet)-[r3:Daje]->(s:Stipendija)")
-                                                    .Where((Stipendija s) => s.Iznos>=iznos)
-                                                    .Return(s=> s.As<Stipendija>())
-                                                    .ResultsAsync;
-                        if(stipendije.Count()!=0)
-                        {
-                            return Ok(stipendije);
-                        }
-                        else
-                        {
-                            return BadRequest("Nema rezultata pretrage");
-                        }
-                }
-                else
-                {
-                    if(String.IsNullOrWhiteSpace(idGrada))
+                    }
+                    else
+                    {
+                         int iznos = Int32.Parse(minIznos);
+                         if(String.IsNullOrWhiteSpace(idGrada))
                     {
                         var stipendije = await _client.Cypher.Match("(d:Drzava)<-[r1:seNalazi]-(g:Grad)<-[r2:Pripada]-(u:Univerzitet)-[r3:Daje]->(s:Stipendija)")
                                                     .Where((Stipendija s,Drzava d) => s.Iznos>=iznos && d.Id==idDrzave)
@@ -177,7 +158,9 @@ namespace NeoProba.Controllers
                         }
                     }
                 }
+
             }
+                   
         }
     }
 }
