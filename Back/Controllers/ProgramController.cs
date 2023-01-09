@@ -34,11 +34,14 @@ namespace NeoProba.Controllers
             p.NivoStudija = nivoStudija;
             p.Opis = opis;
             p.Jezik = jezik;
-            p.idUniverziteta=idUniverziteta;
-
             
+            var uni= await _client.Cypher.Match("(u:Univerzitet)")
+                                        .Where((Univerzitet u)=>u.Id==idUniverziteta)
+                                        .Return(u=>u.As<Univerzitet>())
+                                        .ResultsAsync;
+            p.Univerzitet=uni.FirstOrDefault().Naziv;
 
-            await _client.Cypher.Create("(p:Program $p)")
+             await _client.Cypher.Create("(p:Program $p)")
                                 .WithParam("p",p)
                                 .ExecuteWithoutResultsAsync();
             
@@ -107,7 +110,8 @@ namespace NeoProba.Controllers
                                         brojMesta=r.BrojMesta,
                                         nivoStudija=r.NivoStudija,
                                         opis=r.Opis,
-                                        jezik=r.Jezik
+                                        jezik=r.Jezik,
+                                        univerzitet=r.Univerzitet
                                         }));
                             }
                             else
@@ -134,7 +138,8 @@ namespace NeoProba.Controllers
                                                 brojMesta=r.BrojMesta,
                                                 nivoStudija=r.NivoStudija,
                                                 opis=r.Opis,
-                                        jezik=r.Jezik
+                                                jezik=r.Jezik,
+                                                univerzitet=r.Univerzitet
                                             }));
                                     }
                                     else
@@ -158,7 +163,8 @@ namespace NeoProba.Controllers
                                                 brojMesta=r.BrojMesta,
                                                 nivoStudija=r.NivoStudija,
                                                 opis=r.Opis,
-                                                jezik=r.Jezik
+                                                jezik=r.Jezik,
+                                                univerzitet=r.Univerzitet
                                         }));
                                 }
                                 else
@@ -188,7 +194,8 @@ namespace NeoProba.Controllers
                                                 brojMesta=r.BrojMesta,
                                                 nivoStudija=r.NivoStudija,
                                                 opis=r.Opis,
-                                                jezik=r.Jezik
+                                                jezik=r.Jezik,
+                                                univerzitet=r.Univerzitet
                                         }));
                                 }
                                 else
@@ -214,7 +221,8 @@ namespace NeoProba.Controllers
                                                 brojMesta=r.BrojMesta,
                                                 nivoStudija=r.NivoStudija,
                                                 opis=r.Opis,
-                                                jezik=r.Jezik
+                                                jezik=r.Jezik,
+                                                univerzitet=r.Univerzitet
                                         }));
                                 }
                                 else
@@ -240,7 +248,8 @@ namespace NeoProba.Controllers
                                                 brojMesta=r.BrojMesta,
                                                 nivoStudija=r.NivoStudija,
                                                 opis=r.Opis,
-                                                jezik=r.Jezik
+                                                jezik=r.Jezik,
+                                                univerzitet=r.Univerzitet
                                         }));
                                 }
                                 else
@@ -264,7 +273,8 @@ namespace NeoProba.Controllers
                                                 brojMesta=r.BrojMesta,
                                                 nivoStudija=r.NivoStudija,
                                                 opis=r.Opis,
-                                                jezik=r.Jezik
+                                                jezik=r.Jezik,
+                                                univerzitet=r.Univerzitet
                                         }));
                                 }
                                 else
@@ -310,7 +320,8 @@ namespace NeoProba.Controllers
                                             brojMesta=r.BrojMesta,
                                             nivoStudija=r.NivoStudija,
                                             opis=r.Opis,
-                                            jezik=r.Jezik                                
+                                            jezik=r.Jezik,
+                                            univerzitet=r.Univerzitet                                
                                         }));
                         }
                     
@@ -352,7 +363,8 @@ namespace NeoProba.Controllers
                                             brojMesta=r.BrojMesta,
                                             nivoStudija=r.NivoStudija,
                                             opis=r.Opis,
-                                            jezik=r.Jezik
+                                            jezik=r.Jezik,
+                                            univerzitet=r.Univerzitet
                                         }));
                             }
                             else
@@ -392,7 +404,8 @@ namespace NeoProba.Controllers
                                             brojMesta=r.BrojMesta,
                                             nivoStudija=r.NivoStudija,
                                             opis=r.Opis,
-                                            jezik=r.Jezik
+                                            jezik=r.Jezik,
+                                            univerzitet=r.Univerzitet
                                         }));
                                 }
                                 else
@@ -430,7 +443,8 @@ namespace NeoProba.Controllers
                                             brojMesta=r.BrojMesta,
                                             nivoStudija=r.NivoStudija,
                                             opis=r.Opis,
-                                            jezik=r.Jezik
+                                            jezik=r.Jezik,
+                                            univerzitet=r.Univerzitet
                                         }));
                                 }
                                 else
@@ -473,7 +487,8 @@ namespace NeoProba.Controllers
                                             brojMesta=r.BrojMesta,
                                             nivoStudija=r.NivoStudija,
                                             opis=r.Opis,
-                                            jezik=r.Jezik
+                                            jezik=r.Jezik,
+                                            univerzitet=r.Univerzitet
                                         }));
                         }
                         else
@@ -513,7 +528,8 @@ namespace NeoProba.Controllers
                                             brojMesta=r.BrojMesta,
                                             nivoStudija=r.NivoStudija,
                                             opis=r.Opis,
-                                            jezik=r.Jezik
+                                            jezik=r.Jezik,
+                                            univerzitet=r.Univerzitet
                                         }));
                             }
                             else
@@ -553,7 +569,8 @@ namespace NeoProba.Controllers
                                             brojMesta=r.BrojMesta,
                                             nivoStudija=r.NivoStudija,
                                             opis=r.Opis,
-                                            jezik=r.Jezik
+                                            jezik=r.Jezik,
+                                            univerzitet=r.Univerzitet
                                         }));
                                 }
                                 else
@@ -591,7 +608,8 @@ namespace NeoProba.Controllers
                                             brojMesta=r.BrojMesta,
                                             nivoStudija=r.NivoStudija,
                                             opis=r.Opis,
-                                            jezik=r.Jezik
+                                            jezik=r.Jezik,
+                                            univerzitet=r.Univerzitet
                                         }));
                                 }
                                 else

@@ -11,8 +11,7 @@ namespace Models
         public string NivoStudija { get; set; }
         public string Opis { get; set; }
         public string Jezik { get; set; }
-
-        public string  idUniverziteta { get; set; }
+        public string  Univerzitet { get; set; }
 
         //public Univerzitet Univerzitet { get; set; }
         //public List<Oblast> Oblasti { get; set; }
