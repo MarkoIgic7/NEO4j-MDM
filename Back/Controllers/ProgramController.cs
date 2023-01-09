@@ -92,19 +92,22 @@ namespace NeoProba.Controllers
                         {
                             var res= await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)-[r1:Pripada]->(g:Grad)-[r2:seNalazi]->(d:Drzava)")
                                                         .Where((Drzava d)=>d.Id==drzavaId)
-                                                        .Return(p=>p.As<Program>())
+                                                        .Return((p,u)=>(new{Programi = p.As<Program>() , Univerzitet = u.As<Univerzitet>()}))
                                                         .ResultsAsync;
+                                
+                            
                             if(res.Count()!=0)
                             {
                                  return Ok(res.Select(r=>
                                     new{
-                                        id=r.Id,
-                                        naziv=r.Naziv,
-                                        trajanje=r.Trajanje,
-                                        brojMesta=r.BrojMesta,
-                                        nivoStudija=r.NivoStudija,
-                                        opis=r.Opis,
-                                        jezik=r.Jezik
+                                        id=r.Programi.Id,
+                                        naziv=r.Programi.Naziv,
+                                        trajanje=r.Programi.Trajanje,
+                                        brojMesta=r.Programi.BrojMesta,
+                                        nivoStudija=r.Programi.NivoStudija,
+                                        opis=r.Programi.Opis,
+                                        jezik=r.Programi.Jezik,
+                                        univerzitet = r.Univerzitet.Naziv
                                     }));
                             }
                             else
