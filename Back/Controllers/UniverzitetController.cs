@@ -67,7 +67,7 @@ namespace NeoProba.Controllers
                                     .Where((Grad g)=>g.Id==gradId)
                                     .Return(u=>u.As<Univerzitet>())
                                     .ResultsAsync;
-            return Ok(unis);
+            return Ok(unis.FirstOrDefault());
         }
         [HttpGet]
         [Route("VratiUniverzitet/{idPrograma}")]
@@ -79,14 +79,7 @@ namespace NeoProba.Controllers
                                                     .ResultsAsync;
             if(univerzitet!=null)
             {
-                return Ok(univerzitet.Select(u => new{
-                    id = u.Id,
-                    naziv = u.Naziv,
-                    opis = u.Opis,
-                    kontakt = u.Kontakt,
-                    adresa = u.Adresa,
-                    skolarina = u.Skolarina
-                }));
+                return Ok(univerzitet.FirstOrDefault());
             }
             else
             {

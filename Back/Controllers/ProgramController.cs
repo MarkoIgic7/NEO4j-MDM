@@ -67,16 +67,7 @@ namespace NeoProba.Controllers
                                         .ResultsAsync;
             if(program!=null)
             {
-                return Ok(program.Select(r=>
-                            new{
-                                id=r.Id,
-                                naziv=r.Naziv,
-                                trajanje=r.Trajanje,
-                                brojMesta=r.BrojMesta,
-                                nivoStudija=r.NivoStudija,
-                                opis=r.Opis,
-                                jezik=r.Jezik
-                            }));
+                return Ok(program.FirstOrDefault());
             }
             else
             {
