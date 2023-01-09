@@ -67,7 +67,7 @@ namespace NeoProba.Controllers
                                     .Where((Grad g)=>g.Id==gradId)
                                     .Return(u=>u.As<Univerzitet>())
                                     .ResultsAsync;
-            return Ok(unis.FirstOrDefault());
+            return Ok(unis);
         }
         [HttpGet]
         [Route("VratiUniverzitet/{idPrograma}")]
