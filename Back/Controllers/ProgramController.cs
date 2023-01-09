@@ -308,7 +308,16 @@ namespace NeoProba.Controllers
                         
                         if(deserializedProg.Count()!=0)
                         {
-                            return Ok(deserializedProg);
+                            return Ok(deserializedProg.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
                         }
                         else
                         {
@@ -340,7 +349,16 @@ namespace NeoProba.Controllers
                     
                             if(deserializedProg.Count()!=0)
                             {
-                                return Ok(deserializedProg);
+                                 return Ok(deserializedProg.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
                             }
                             else
                             {
@@ -371,7 +389,16 @@ namespace NeoProba.Controllers
                                 
                                 if(deserializedProg.Count()!=0)
                                 {
-                                    return Ok(deserializedProg);
+                                     return Ok(deserializedProg.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
                                 }
                                 else
                                 {
@@ -400,7 +427,16 @@ namespace NeoProba.Controllers
                                 
                                 if(deserializedProg.Count()!=0)
                                 {
-                                    return Ok(deserializedProg);
+                                     return Ok(deserializedProg.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
                                 }
                                 else
                                 {
@@ -434,7 +470,16 @@ namespace NeoProba.Controllers
                     
                        if(deserializedProg.Count()!=0)
                         {
-                            return Ok(deserializedProg);
+                             return Ok(deserializedProg.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
                         }
                         else
                         {
@@ -465,7 +510,16 @@ namespace NeoProba.Controllers
                         
                             if(deserializedProg.Count()!=0)
                             {
-                                return Ok(deserializedProg);
+                                 return Ok(deserializedProg.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
                             }
                             else
                             {
@@ -496,7 +550,16 @@ namespace NeoProba.Controllers
                             
                                 if(deserializedProg.Count()!=0)
                                 {
-                                    return Ok(deserializedProg);
+                                     return Ok(deserializedProg.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
                                 }
                                 else
                                 {
@@ -525,7 +588,16 @@ namespace NeoProba.Controllers
                             
                                 if(deserializedProg.Count()!=0)
                                 {
-                                    return Ok(deserializedProg);
+                                     return Ok(deserializedProg.Select(r=>
+                                        new{
+                                            id=r.Id,
+                                            naziv=r.Naziv,
+                                            trajanje=r.Trajanje,
+                                            brojMesta=r.BrojMesta,
+                                            nivoStudija=r.NivoStudija,
+                                            opis=r.Opis,
+                                            jezik=r.Jezik
+                                        }));
                                 }
                                 else
                                 {
