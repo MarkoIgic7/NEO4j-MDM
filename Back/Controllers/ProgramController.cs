@@ -148,7 +148,7 @@ namespace NeoProba.Controllers
                 {
                     int raz = grad.FirstOrDefault().Troskovi-tz;
                     int br = raz%50;
-                    tzUdeo = 100- br*5;
+                    tzUdeo = 100- br*1;
                 }
                 //troskovi skolarine
                 if(univerzitet.FirstOrDefault().Skolarina>=ts)
@@ -159,7 +159,7 @@ namespace NeoProba.Controllers
                 {
                     int raz = univerzitet.FirstOrDefault().Skolarina-tz;
                     int br = raz%50;
-                    tsUdeo = 100- br*5;
+                    tsUdeo = 100- br*1;
                 }
                 //oblasti udeo
                 int brOblasti = oblasti.Count();
@@ -171,7 +171,7 @@ namespace NeoProba.Controllers
                     }
                 }
                 //
-                double ukupno = jezikUdeo*0.5+oblastiUdeo*0.3+(tz+ts)*0.2;
+                double ukupno = jezikUdeo*0.5+oblastiUdeo*0.3+(tzUdeo+tsUdeo)*0.2;
                 mp.Procenat=ukupno;
             }
             return Ok(masterProgrami.OrderByDescending(x => x.Procenat));
