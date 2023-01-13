@@ -89,6 +89,94 @@ namespace NeoProba.Controllers
             return Ok(jezici);
         }
         [HttpGet]
+        [Route("PefectMatch/{idUniverziteta}/{idPrograma}/{jezik}/{idSertifikata}/{troskoviZivota}/{troskoviSkolarine}")]
+        public async Task<ActionResult> PefectMatch(string idUniverziteta,string idPrograma,string jezik,string idSertifikata,string troskoviZivota,string troskoviSkolarine)
+        {
+            int tz = int.Parse(troskoviZivota);
+            int ts = int.Parse(troskoviSkolarine);
+
+            var mojeOblasti = await _client.Cypher.Match("(o:Oblast)-[r:pripadaProgramu]->(p:Program)")
+                                                    .Where((Program p) => p.Id==idPrograma)
+                                                    .Return(o => o.As<Oblast>().Id)
+                                                    .ResultsAsync;
+            var masterProgrami = await _client.Cypher.Match("(p:Program)")
+                                                    .Where((Program p) => p.NivoStudija=="Master")
+                                                    .Return(p => p.As<Program>())
+                                                    .ResultsAsync;
+            foreach (var mp in masterProgrami)
+            {
+                float jezikUdeo,tzUdeo,tsUdeo,oblastiUdeo=0;
+                var sertifikati = await _client.Cypher.Match("(s:Sertifikat)<-[r1:Podrzava]-(u:Univerzitet)-[r2:Sadrzi]->(p:Program)")
+                                                        .Where((Program p) => p.Id==mp.Id)
+                                                        .Return(s => s.As<Sertifikat>().Id)
+                                                        .ResultsAsync;
+                var grad = await _client.Cypher.Match("(p:Program)<-[r1:Sadrzi]-(u:Univerzitet)-[r2:Pripada]->(g:Grad)")
+                                                .Where((Program p) => p.Id==mp.Id)
+                                                .Return(g => g.As<Grad>())
+                                                .ResultsAsync;
+                var univerzitet = await _client.Cypher.Match("(u:Univerzitet)-[r1:Sadrzi]->(p:Program)")
+                                                        .Where((Program p) => p.Id==mp.Id)
+                                                        .Return(u=> u.As<Univerzitet>())
+                                                        .ResultsAsync;
+                var oblasti = await _client.Cypher.Match("(p:Program)-[r1:Obuhvata]->(o:Oblast)")
+                                                    .Where((Program p) => p.Id==mp.Id)
+                                                    .Return(o => o.As<Oblast>().Id)
+                                                    .ResultsAsync;
+
+                if(mp.Jezik==jezik)
+                {
+                    if(idSertifikata=="Maternji" || sertifikati.Contains(idSertifikata))
+                    {
+                        jezikUdeo=100;
+                    }
+                    else
+                    {
+                        jezikUdeo =0;
+                    }
+                }
+                else
+                {
+                    jezikUdeo = 0;
+                }
+
+                //troskovi zivota
+                if(grad.FirstOrDefault().Troskovi<=tz)
+                {
+                    tzUdeo = 100;
+                }
+                else
+                {
+                    int raz = grad.FirstOrDefault().Troskovi-tz;
+                    int br = raz%50;
+                    tzUdeo = 100- br*5;
+                }
+                //troskovi skolarine
+                if(univerzitet.FirstOrDefault().Skolarina>=ts)
+                {
+                    tsUdeo = 100;
+                }
+                else
+                {
+                    int raz = univerzitet.FirstOrDefault().Skolarina-tz;
+                    int br = raz%50;
+                    tsUdeo = 100- br*5;
+                }
+                //oblasti udeo
+                int brOblasti = oblasti.Count();
+                foreach (var o in oblasti)
+                {
+                    if(mojeOblasti.Contains(o))
+                    {
+                        oblastiUdeo+=100/brOblasti;
+                    }
+                }
+                //
+                double ukupno = jezikUdeo*0.5+oblastiUdeo*0.3+(tz+ts)*0.2;
+                mp.Procenat=ukupno;
+            }
+            return Ok(masterProgrami.OrderByDescending(x => x.Procenat));
+        }
+        [HttpGet]
         [Route("VratiProgrameUniverziteta/{idUniverziteta}")]
         public async Task<ActionResult> VratiProgrameUniverziteta(string idUniverziteta)
         {

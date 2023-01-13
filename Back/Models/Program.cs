@@ -13,6 +13,8 @@ namespace Models
         public string Jezik { get; set; }
         public string  Univerzitet { get; set; }
 
+        public double Procenat { get; set; }
+
         //public Univerzitet Univerzitet { get; set; }
         //public List<Oblast> Oblasti { get; set; }
     }
