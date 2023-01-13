@@ -4,9 +4,9 @@ namespace Models
 {
     public class Sertifikat
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Naziv { get; set; }
-        public string Nivo { get; set; }
+        //public string Nivo { get; set; }
 
         //public List<Univerzitet> Univerziteti { get; set; }
     }

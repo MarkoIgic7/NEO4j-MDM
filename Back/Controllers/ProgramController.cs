@@ -79,6 +79,26 @@ namespace NeoProba.Controllers
             }
         }
         [HttpGet]
+        [Route("VratiSveJezike")]
+        public async Task<ActionResult> VratiSveJezike()
+        {
+            var jezici = await _client.Cypher.Match("(p:Program)")
+                                        .ReturnDistinct(p => p.As<Program>().Jezik)
+                                        .ResultsAsync;
+
+            return Ok(jezici);
+        }
+        [HttpGet]
+        [Route("VratiProgrameUniverziteta/{idUniverziteta}")]
+        public async Task<ActionResult> VratiProgrameUniverziteta(string idUniverziteta)
+        {
+            var programi = await _client.Cypher.Match("(p:Program)<-[r:Sadrzi]-(u:Univerzitet)")
+                                                    .Where((Univerzitet u)=> u.Id==idUniverziteta)
+                                                    .Return(p => p.As<Program>())
+                                                    .ResultsAsync;
+            return Ok(programi);
+        }
+        [HttpGet]
         [Route("VratiSvePrograme/{drzavaId}/{gradId}/{uniId}/{nivo}/{listaOblasti}")]
         public async Task<ActionResult> VratiSvePrograme(string drzavaId,string gradId,string uniId,string nivo,string listaOblasti)
         {
