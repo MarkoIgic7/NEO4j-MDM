@@ -28,12 +28,24 @@ namespace NeoProba.Controllers
             Oblast o = new Oblast();
             o.Id = Guid.NewGuid().ToString();
             o.Naziv = naziv;
-            
-            await _client.Cypher.Create("(o:Oblast $o)")
+
+            var oblast = await _client.Cypher.Match("(o:Oblast)")
+                                            .Where((Oblast o)=>o.Naziv==naziv)
+                                            .Return(o => o.As<Oblast>())
+                                            .ResultsAsync;
+            if(oblast.FirstOrDefault()==null)
+            {
+                await _client.Cypher.Create("(o:Oblast $o)")
                             .WithParam("o",o)
                             .ExecuteWithoutResultsAsync();
             
-            return Ok("Dodata Oblast");
+                return Ok("Dodata Oblast");
+            }
+            else
+            {
+                return BadRequest("Oblast sa tim imenom vec postoji");
+            }
+            
 
         }
         [HttpGet]
