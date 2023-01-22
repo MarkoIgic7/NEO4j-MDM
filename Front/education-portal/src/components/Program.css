@@ -1,0 +1,131 @@
+.ProgramStrana{
+    display:flex;
+    flex-direction: column;
+    padding:20px;
+    padding-right: 100px;
+}
+.ProgramHeader{
+    display:flex;
+    flex-direction: column;
+    width:100%;
+    padding: 40px;
+    background-color: antiquewhite;
+    border-radius: 20px;
+    align-items: center;
+
+}
+.NaziviTrajanje{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: xx-large;
+    color:rgb(129, 80, 17);
+    width:50%;
+    margin-bottom: 20px;
+}
+.UniverzitetiBrMesta{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: xx-large;
+    color:rgb(129, 80, 17);
+    width:50%;
+
+}
+
+.ProgUni{
+    display:flex;
+    flex-direction: row;
+    padding:20px;
+    padding-right: 100px;
+}
+
+.OpisProgDiv{
+    display: flex;
+    flex-direction: column;
+    width:50%;
+    padding: 40px;
+    background-color: antiquewhite;
+    border-radius: 20px;
+    margin-left: 140px;
+}
+.DodaciProg{
+    display:flex;
+    flex-direction: column;
+    background:linear-gradient(90deg,#d35b24 50%, #d35b24 100%);
+    color: white;
+    font-size: larger;
+    padding:20px;
+    border-radius: 15px;
+    align-items: center;
+}
+.DodaciProgKartica{
+    display:flex;
+    flex-direction: column;
+    background:linear-gradient(90deg,#c45b2b 50%, #b95527 100%);
+    color: white;
+    font-size: larger;
+    padding:20px;
+    width:50%;
+    align-items: center;
+    margin:auto;
+    border-radius: 10px;
+}
+.DodaciDomKartica{
+    display:flex;
+    flex-direction: column;
+    background:linear-gradient(90deg,#c45b2b 50%, #b95527 100%);
+    color: white;
+    font-size: larger;
+    padding:20px;
+    width:60%;
+    align-items: center;
+    margin:auto;
+    border-radius: 10px;
+}
+.dodaciRed{
+    display: flex;
+    justify-content: space-between;
+    width:40%;
+}
+.dodaciRed1{
+    display: flex;
+    justify-content: space-between;
+    width:60%;
+}
+.OpisProg{
+    margin-bottom: 20px;
+    padding:20px;
+    border-style: solid;
+    border-radius: 15px;
+    border-width: 1px;
+    border-color: rgb(224, 175, 111);
+    color:rgb(129, 80, 17);
+    font-size: larger;
+
+}
+.OpisUniverzitetaDiv{
+    display: flex;
+    flex-direction: column;
+    width:50%;
+    padding: 40px;
+    background-color: antiquewhite;
+    border-radius: 20px;
+    margin-left: 40px;
+}
+.OpisUniverziteta{
+    padding:20px;
+    border-style: solid;
+    border-radius: 15px;
+    border-width: 1px;
+    border-color: rgb(224, 175, 111);
+    color:rgb(129, 80, 17);
+    font-size: larger;
+    margin-bottom: 20px;
+
+}
+.ProgramNaslov{
+    font-size:x-large;
+    color:rgb(129, 80, 17);
+    margin-bottom: 20px;
+}
