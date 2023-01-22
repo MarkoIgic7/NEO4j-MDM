@@ -23,8 +23,8 @@ namespace NeoProba.Controllers
             _client = client;
         }
         [HttpPost]
-        [Route("DodajProgram/{naziv}/{trajanje}/{brojMesta}/{nivoStudija}/{opis}/{jezik}/{oblasti}/{idUniverziteta}")]
-        public async Task<ActionResult> DodajProgram(string naziv,int trajanje,int brojMesta,string nivoStudija,string opis,string jezik,string oblasti,string idUniverziteta)
+        [Route("DodajProgram/{naziv}/{trajanje}/{brojMesta}/{nivoStudija}/{opis}/{jezik}/{idUniverziteta}/{oblasti}")]
+        public async Task<ActionResult> DodajProgram(string naziv,int trajanje,int brojMesta,string nivoStudija,string opis,string jezik,string idUniverziteta,string oblasti)
         {
             Program p = new Program();
             p.Id = Guid.NewGuid().ToString();

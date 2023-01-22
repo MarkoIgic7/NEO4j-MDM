@@ -23,8 +23,8 @@ namespace NeoProba.Controllers
         }
 
         [HttpPost]
-        [Route("DodajSertifikat/{naziv}")]
-        public async Task<ActionResult> DodajSertifikat(string naziv)
+        [Route("DodajSertifikat/{naziv}/{uniId}")]
+        public async Task<ActionResult> DodajSertifikat(string naziv,string uniId)
         {
             Sertifikat sert = new Sertifikat();
             sert.Id = Guid.NewGuid().ToString();
@@ -32,6 +32,11 @@ namespace NeoProba.Controllers
 
             await _client.Cypher.Create("(s:Sertifikat $s)")
                                 .WithParam("s",sert)
+                                .ExecuteWithoutResultsAsync();
+
+             await _client.Cypher.Match("(s:Sertifikat),(u:Univerzitet)")
+                                .Where((Univerzitet u,Sertifikat s)=> u.Id==uniId && s.Id==sert.Id)
+                                .Create("(u)-[r:Podrzava]->(s)")
                                 .ExecuteWithoutResultsAsync();
 
             return Ok("Dodat sertifikat");
