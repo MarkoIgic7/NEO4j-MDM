@@ -22,8 +22,8 @@ namespace NeoProba.Controllers
             _client = client;
         }
         [HttpPost]
-        [Route("DodajUniverzitet/{naziv}/{opis}/{kontakt}/{adresa}/{skolarina}")]
-        public async Task<ActionResult> DodajUniverzitet(string naziv,string opis,string kontakt,string adresa,int skolarina)
+        [Route("DodajUniverzitet/{naziv}/{opis}/{kontakt}/{adresa}/{skolarina}/{idGrada}")]
+        public async Task<ActionResult> DodajUniverzitet(string naziv,string opis,string kontakt,string adresa,int skolarina,string idGrada)
         {
             Univerzitet u = new Univerzitet();
             u.Id = Guid.NewGuid().ToString();
@@ -35,6 +35,11 @@ namespace NeoProba.Controllers
             await _client.Cypher.Create("(u:Univerzitet $u)")
                             .WithParam("u",u)
                             .ExecuteWithoutResultsAsync();
+
+            await _client.Cypher.Match("(uni:Univerzitet),(g:Grad)")
+                                .Where((Univerzitet uni, Grad g)=>uni.Id==u.Id && g.Id==idGrada)
+                                .Create("((uni)-[r:Pripada]->(g))")
+                                .ExecuteWithoutResultsAsync();
             
             return Ok("Dodat univerzitet");
 
